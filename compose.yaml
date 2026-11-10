@@ -1,0 +1,93 @@
+# =============================================================================
+# 環境はプロファイルで切り替える。同時に複数立ち上げてもポートは衝突しない。
+#
+#   開発  : docker compose --profile dev  up --build     -> http://localhost:4321
+#   テスト: docker compose --profile test up --build     -> http://localhost:8081
+#   本番  : docker compose --profile prod up --build -d  -> http://localhost:8080
+#
+# test と prod は「同じ Dockerfile・同じ nginx イメージ」から作られる。
+# 違いは APP_ENV による nginx 設定(test: noindex / robots 全拒否)と公開 URL のみ。
+# =============================================================================
+name: kuun0suke-portfolio
+
+x-hardening: &hardening
+  # コンテナ内でのプロセス権限昇格(setuid 等)を禁止
+  security_opt:
+    - no-new-privileges:true
+  # Linux capability を全て落とす(非特権ポートなので NET_BIND_SERVICE も不要)
+  cap_drop:
+    - ALL
+
+services:
+  # --------------------------------------------------------------- dev -------
+  dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      target: dev
+    <<: *hardening
+    ports:
+      - "127.0.0.1:4321:4321"
+    volumes:
+      - .:/app
+      # node_modules はホストと共有しない(Windows での速度・改ざん混入の両面で有利)
+      - dev_node_modules:/app/node_modules
+    environment:
+      WATCH_POLLING: "true"
+      SITE_URL: http://localhost:4321
+      BASE_PATH: /
+    init: true
+    stdin_open: true
+    tty: true
+
+  # --------------------------------------------------------------- test ------
+  test:
+    profiles: ["test"]
+    build:
+      context: .
+      target: runtime
+      args:
+        APP_ENV: test
+        SITE_URL: http://localhost:8081
+        BASE_PATH: /
+    image: kuun0suke-portfolio:test
+    <<: *hardening
+    ports:
+      - "127.0.0.1:8081:8080"
+    # ルートファイルシステムを読み取り専用に。nginx の一時領域だけ tmpfs を与える。
+    read_only: true
+    tmpfs:
+      - /tmp:mode=1777,size=16m
+    pids_limit: 64
+    mem_limit: 64m
+
+  # --------------------------------------------------------------- prod ------
+  prod:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: runtime
+      args:
+        APP_ENV: production
+        SITE_URL: ${SITE_URL:-https://supercatman11.github.io}
+        BASE_PATH: ${BASE_PATH:-/}
+    image: kuun0suke-portfolio:prod
+    <<: *hardening
+    # 本番は TLS 終端(Caddy / Cloudflare 等)の背後に置く前提で localhost にのみ bind。
+    # VPS で直接公開するなら前段にリバースプロキシを置き、この行はそのまま使う。
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:mode=1777,size=16m
+    pids_limit: 64
+    mem_limit: 64m
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  dev_node_modules:

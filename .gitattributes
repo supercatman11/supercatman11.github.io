@@ -1,0 +1,8 @@
+# Windows でチェックアウトしても LF を維持する(シェルスクリプト / Dockerfile が CRLF で壊れるのを防ぐ)
+* text=auto eol=lf
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary

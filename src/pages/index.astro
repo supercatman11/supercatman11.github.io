@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Section from '../components/Section.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { profile } from '../data/profile';
+---
+
+<BaseLayout>
+  <!-- ------------------------------------------------------------ Hero -->
+  <section class="hero">
+    <div class="container">
+      <p class="hero-eyebrow">{profile.role} · {profile.location}</p>
+      <h1>{profile.name}</h1>
+      <p class="hero-tagline">{profile.tagline}</p>
+      <div class="hero-actions">
+        <a class="button button--primary" href="#works">作品を見る</a>
+        <a class="button" href="#contact">連絡する</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ----------------------------------------------------------- About -->
+  <Section id="about" title="About">
+    <div class="prose">
+      {profile.bio.map((p) => <p>{p}</p>)}
+    </div>
+  </Section>
+
+  <!-- ---------------------------------------------------------- Skills -->
+  <Section id="skills" title="Skills">
+    <dl class="skills">
+      {profile.skills.map((group) => (
+        <div class="skill-group">
+          <dt>{group.category}</dt>
+          <dd>
+            <ul class="tag-list">
+              {group.items.map((s) => <li class="tag">{s}</li>)}
+            </ul>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </Section>
+
+  <!-- ----------------------------------------------------------- Works -->
+  <Section id="works" title="Works" lead="これまでに制作したものの一覧">
+    <ul class="works-grid">
+      {profile.projects.map((project) => (
+        <li><ProjectCard project={project} /></li>
+      ))}
+    </ul>
+  </Section>
+
+  <!-- --------------------------------------------------------- Contact -->
+  <Section id="contact" title="Contact">
+    <p class="prose">{profile.contact.message}</p>
+    <ul class="contact-links">
+      {profile.links.map((l) => (
+        <li>
+          <a class="button" href={l.href} target="_blank" rel="me noopener noreferrer">{l.label} ↗</a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: clamp(4rem, 12vw, 8rem) 0 clamp(3rem, 8vw, 5rem);
+  }
+  .hero-eyebrow {
+    margin-bottom: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    font-size: 0.95rem;
+  }
+  .hero h1 {
+    margin-bottom: 0.5rem;
+  }
+  .hero-tagline {
+    font-size: clamp(1.1rem, 2.2vw, 1.35rem);
+    color: var(--fg-muted);
+    max-width: 40rem;
+    margin-bottom: 2rem;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .prose {
+    max-width: 45rem;
+  }
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1.5rem;
+    margin: 0;
+  }
+  .skill-group {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+  }
+  .skill-group dt {
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .skill-group dd {
+    margin: 0;
+  }
+  .works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 1.25rem;
+  }
+  .contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

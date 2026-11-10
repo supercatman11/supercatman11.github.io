@@ -1,0 +1,96 @@
+# =============================================================================
+# 本番デプロイ: main への push で GitHub Pages に公開する。
+#
+#   公開 URL は自動で決まる:
+#     リポジトリ名が <owner>.github.io  -> https://<owner>.github.io/
+#     それ以外                           -> https://<owner>.github.io/<repo>/
+#   独自ドメインを使う場合はリポジトリ変数 SITE_URL / BASE_PATH を設定して上書きする。
+#
+# 事前設定: Settings > Pages > Build and deployment > Source を "GitHub Actions" にする。
+# =============================================================================
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: package.json
+          cache: npm
+
+      - name: Resolve SITE_URL / BASE_PATH
+        id: site
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          VAR_SITE_URL: ${{ vars.SITE_URL }}
+          VAR_BASE_PATH: ${{ vars.BASE_PATH }}
+        run: |
+          owner_lc="$(printf '%s' "$OWNER" | tr '[:upper:]' '[:lower:]')"
+          if [ -n "$VAR_SITE_URL" ]; then
+            site_url="$VAR_SITE_URL"
+          else
+            site_url="https://${owner_lc}.github.io"
+          fi
+          if [ -n "$VAR_BASE_PATH" ]; then
+            base_path="$VAR_BASE_PATH"
+          elif [ "$REPO" = "${owner_lc}.github.io" ] || [ "$REPO" = "${OWNER}.github.io" ]; then
+            base_path="/"
+          else
+            base_path="/${REPO}/"
+          fi
+          echo "SITE_URL=$site_url"   >> "$GITHUB_OUTPUT"
+          echo "BASE_PATH=$base_path" >> "$GITHUB_OUTPUT"
+          echo "site=$site_url base=$base_path"
+
+      - name: Install
+        run: npm ci --ignore-scripts
+
+      - name: Check & Build
+        env:
+          SITE_URL: ${{ steps.site.outputs.SITE_URL }}
+          BASE_PATH: ${{ steps.site.outputs.BASE_PATH }}
+        run: |
+          npm run check
+          npm run build
+
+      - name: Configure Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5

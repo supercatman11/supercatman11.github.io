@@ -1,0 +1,67 @@
+---
+import type { Project } from '../data/profile';
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+---
+
+<article class="card">
+  <header class="card-head">
+    <h3>{project.title}</h3>
+    {project.period && <span class="period">{project.period}</span>}
+  </header>
+  <p>{project.description}</p>
+  <ul class="tag-list" aria-label="使用技術">
+    {project.tech.map((t) => <li class="tag">{t}</li>)}
+  </ul>
+  {(project.url || project.repo) && (
+    <ul class="actions">
+      {project.url && (
+        <li><a href={project.url} target="_blank" rel="noopener noreferrer">サイトを見る ↗</a></li>
+      )}
+      {project.repo && (
+        <li><a href={project.repo} target="_blank" rel="noopener noreferrer">ソースコード ↗</a></li>
+      )}
+    </ul>
+  )}
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-elevated);
+    height: 100%;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .card-head h3 {
+    margin: 0;
+  }
+  .period {
+    font-size: 0.85rem;
+    color: var(--fg-muted);
+    white-space: nowrap;
+  }
+  .card p {
+    margin: 0;
+    color: var(--fg-muted);
+    flex: 1;
+  }
+  .actions {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+</style>

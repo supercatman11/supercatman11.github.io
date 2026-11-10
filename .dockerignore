@@ -1,0 +1,11 @@
+# ビルドコンテキストから除外(イメージ肥大化・秘密情報の混入防止)
+.git
+.github
+node_modules
+dist
+.astro
+.env
+.env.*
+!.env.example
+*.log
+README.md

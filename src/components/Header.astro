@@ -1,0 +1,83 @@
+---
+import { profile } from '../data/profile';
+import { withBase } from '../lib/paths';
+
+const home = withBase('/');
+const nav = [
+  { label: 'About', href: `${home}#about` },
+  { label: 'Skills', href: `${home}#skills` },
+  { label: 'Works', href: `${home}#works` },
+  { label: 'Contact', href: `${home}#contact` },
+];
+---
+
+<header class="site-header">
+  <div class="container inner">
+    <a class="brand" href={home} aria-label={`${profile.name} ホーム`}>
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <span>{profile.name}</span>
+    </a>
+    <nav aria-label="メインナビゲーション">
+      <ul>
+        {nav.map((item) => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.75rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 1rem;
+  }
+  nav ul {
+    display: flex;
+    gap: clamp(0.75rem, 3vw, 1.5rem);
+  }
+  nav a {
+    color: var(--fg-muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  nav a:hover {
+    color: var(--fg);
+    text-decoration: underline;
+  }
+  @media (max-width: 480px) {
+    .brand span:not(.brand-mark) {
+      display: none;
+    }
+  }
+</style>
