@@ -26,16 +26,16 @@ export type Project = {
 };
 
 export const profile = {
-  name: 'Kuun0suke',
+  name: 'supercatman11',
   /** 肩書き・一言 */
   role: 'Developer', // TODO: 例 "Web Developer" / "学生エンジニア"
   tagline: 'ものづくりが好きな大学院生です。', // TODO
   description:
-    'Kuun0suke のポートフォリオサイト。これまでに制作した作品、持っているスキル、連絡先をまとめています。',
+    'supercatman11 のポートフォリオサイト。これまでに制作した作品、持っているスキル、連絡先をまとめています。',
   location: 'Japan', // TODO
   /** 自己紹介(段落ごとに配列) */
   bio: [
-    'はじめまして、Kuun0suke です。', // TODO
+    'はじめまして、supercatman11 です。', // TODO
     '情報科学を勉強している大学院生です。バイトでは Web アプリケーションの開発や技術調査を担当しています。', // TODO
     '本サイトはポートフォリオを作ってみたいという動機で試しに作ってみました。', // TODO
   ],
