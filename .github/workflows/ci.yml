@@ -72,14 +72,14 @@ jobs:
             APP_ENV=production
           load: true
           push: false
-          tags: kuun0suke-portfolio:ci
+          tags: supercatman11-portfolio:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: kuun0suke-portfolio:ci
+          image-ref: supercatman11-portfolio:ci
           format: table
           exit-code: "1"
           ignore-unfixed: true
@@ -90,7 +90,7 @@ jobs:
           set -eux
           docker run -d --rm --name smoke -p 8080:8080 \
             --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges \
-            kuun0suke-portfolio:ci
+            supercatman11-portfolio:ci
           for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8080/ >/dev/null && break; sleep 1; done
           curl -sSI http://127.0.0.1:8080/ | tee headers.txt
           grep -qi '^content-security-policy:' headers.txt

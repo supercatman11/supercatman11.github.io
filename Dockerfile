@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 # =============================================================================
-# Kuun0suke Portfolio - マルチステージ Dockerfile
+# supercatman11 Portfolio - マルチステージ Dockerfile
 #
 #   deps    : 依存解決(lockfile 厳守・install スクリプト無効)
 #   dev     : 開発サーバー(ホットリロード)      -> compose profile "dev"

@@ -1,9 +1,9 @@
 {
-  "name": "kuun0suke-portfolio",
+  "name": "supercatman11-portfolio",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Kuun0suke のポートフォリオサイト",
+  "description": "supercatman11 のポートフォリオサイト",
   "engines": {
     "node": ">=22.23.4",
     "npm": ">=10"

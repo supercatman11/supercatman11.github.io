@@ -8,7 +8,7 @@
 # test と prod は「同じ Dockerfile・同じ nginx イメージ」から作られる。
 # 違いは APP_ENV による nginx 設定(test: noindex / robots 全拒否)と公開 URL のみ。
 # =============================================================================
-name: kuun0suke-portfolio
+name: supercatman11-portfolio
 
 x-hardening: &hardening
   # コンテナ内でのプロセス権限昇格(setuid 等)を禁止
@@ -50,7 +50,7 @@ services:
         APP_ENV: test
         SITE_URL: http://localhost:8081
         BASE_PATH: /
-    image: kuun0suke-portfolio:test
+    image: supercatman11-portfolio:test
     <<: *hardening
     ports:
       - "127.0.0.1:8081:8080"
@@ -71,7 +71,7 @@ services:
         APP_ENV: production
         SITE_URL: ${SITE_URL:-https://supercatman11.github.io}
         BASE_PATH: ${BASE_PATH:-/}
-    image: kuun0suke-portfolio:prod
+    image: supercatman11-portfolio:prod
     <<: *hardening
     # 本番は TLS 終端(Caddy / Cloudflare 等)の背後に置く前提で localhost にのみ bind。
     # VPS で直接公開するなら前段にリバースプロキシを置き、この行はそのまま使う。
