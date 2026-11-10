@@ -14,7 +14,7 @@ const nav = [
 <header class="site-header">
   <div class="container inner">
     <a class="brand" href={home} aria-label={`${profile.name} ホーム`}>
-      <span class="brand-mark" aria-hidden="true">K</span>
+      <span class="brand-mark" aria-hidden="true">{profile.name.charAt(0).toUpperCase()}</span>
       <span>{profile.name}</span>
     </a>
     <nav aria-label="メインナビゲーション">
